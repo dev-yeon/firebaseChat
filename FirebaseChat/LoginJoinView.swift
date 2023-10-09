@@ -34,7 +34,7 @@ struct LoginJoinView: View {
                         .background(Color.white)
                         
                         MyButton(title: "로그인", color: .blue) {
-                            print("Button Tapped!")
+                            loginUserAction()
                         }
                         
                         MyButton(title: "회원가입", color: Color(.init(red: 0.5, green: 0.2, blue: 0.9, alpha: 1.0))) {
@@ -98,6 +98,20 @@ struct LoginJoinView: View {
                 .ignoresSafeArea())
         }//NavigationView
     }//body
+    
+    func loginUserAction() {
+        FirebaseUtil.shared.auth.signIn(withEmail: email, password: password) {authResult, error in
+            if let error = error {
+                print("로그인 중 오류 발생 : \(error.localizedDescription)")
+                return
+            }
+            // 로그인 성공
+            print("로그인한 사용자: \(authResult?.user.email ?? "")")
+                        print("로그인한 사용자: \(authResult?.user.uid ?? "" )")
+            
+            // 다른 뷰로 이동하는 등 추가 작업 수행
+        }
+    }
     
 }//View
 
