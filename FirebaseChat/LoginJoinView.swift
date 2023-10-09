@@ -65,10 +65,11 @@ struct LoginJoinView: View {
                                 }
                             }
                             .overlay(RoundedRectangle(cornerRadius: 64)
-                                .stroke(Color.black, lineWidth: 3))
+                                .stroke(Color.gray, lineWidth: 3)) //선택되면 바뀌어짐 
                         }
                         .sheet(isPresented: $isShowingImagePicker) {
                             ImagePickerView(selectedImage: $profileImage)
+                            //isShowingImagePicker 의 변수가 true 이면, 이미지 뷰를 프로파일이미지- selectedImage 에 연결해주는 코드
                         }
                         //입력란
                         Group {
