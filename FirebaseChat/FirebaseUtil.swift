@@ -7,9 +7,12 @@
 
 import Foundation
 import Firebase
+import FirebaseStorage
 
 class FirebaseUtil: NSObject {
     let auth: Auth
+    let storage: Storage
+    
     //스스로 객체 생성 - 인스턴스 (싱글톤)
     static let shared = FirebaseUtil()
     
@@ -18,6 +21,7 @@ class FirebaseUtil: NSObject {
         FirebaseApp.configure()
         
         self.auth = Auth.auth()
+        self.storage = Storage.storage()
         
         super.init()
     }

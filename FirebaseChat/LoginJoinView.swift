@@ -110,9 +110,78 @@ struct LoginJoinView: View {
             print("회원가입한 사용자: \(authResult?.user.email ?? "")")
             
             // 프로필 이미지 업로드, 다른 뷰로 이동하는 등 추가 작업 수행
-            
+            self.uploadImage()
         }
     }
+    
+    func uploadImage() {
+        guard let safeProfileImage = profileImage else {
+            print("이미지 선택 안됨")
+            return
+        }
+        
+        //파이어 베이스 스토리지에 업로드 하려면, 인증된 사용자 여야함.
+        guard let uid = FirebaseUtil.shared.auth.currentUser?.uid else {
+            print("로그인 안됨")
+            return
+        }
+        //스토리지에 저장할 경로 : images 폴더 밑에 uuid 하나 생성하고, jpg 형태로 생성하고프다.
+        let imagePath = "images/\(UUID().uuidString).jpg"
+        
+        uploadImageToStorage(safeProfileImage, path: imagePath) {
+            result in
+            switch result {
+            case .success(let downloadURL):
+                print("이미지 업로드 성공: \(downloadURL)")
+            case .failure(let error):
+                print("이미지 업로드 실패: \(error.localizedDescription)")
+            }
+        }
+        
+        //이미지 업로드 메소드
+        //uploadImageToStorage()
+    }
+    //@escaping 은 이 클로저 함수가 이 블록을, 함수 호출을 넘어서도 한번 더 호출 될 수 있도록 해주는 지시어
+    func uploadImageToStorage(_ image: UIImage, path: String, completion: @escaping (Result<String, Error>) -> Void) {
+            // 1. 이미지를 Data로 변환
+        // jpeg 으로 올라갈거고. 0.5 (절반) 정도 올라갈 것.
+            guard let imageData = image.jpegData(compressionQuality: 0.5) else {
+                completion(.failure(NSError(domain: "ImageConversion", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to convert image to data"])))
+                return
+            }
+            
+            // 2. Firebase 스토리지 참조 생성
+            let storageRef = FirebaseUtil.shared.storage.reference().child(path)
+
+            // 3. 이미지 데이터 업로드
+            storageRef.putData(imageData, metadata: nil) { metadata, error in
+                if let error = error {
+                    // 오류 발생 시
+                    completion(.failure(error))
+                    return
+                }
+                
+                // 4. 다운로드 URL 가져오기
+            
+                storageRef.downloadURL { url, error in
+                    if let error = error {
+                        // 오류 발생 시
+                        completion(.failure(error))
+                        return
+                    }
+                    //url 이 completion 클로저에 담겨온다.
+                    if let url = url {
+                        // 다운로드 URL 성공적으로 가져옴
+                        // 성공시에는 결국 URL 객체 absoluteString 에 실제적으로 URL이 찍힌다고 보면 됨
+                        completion(.success(url.absoluteString))
+                    } else {
+                        completion(.failure(NSError(domain: "DownloadURL", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to get download URL"])))
+                    }
+                }
+            }
+        }
+
+  
     
     func loginUserAction() {
         FirebaseUtil.shared.auth.signIn(withEmail: email, password: password) {authResult, error in
@@ -156,3 +225,25 @@ struct LoginJoinView_Previews: PreviewProvider {
         LoginJoinView(viewModel: MainViewModel())
     }
 }
+
+
+/*
+ 
+ **`@escaping`**은 Swift의 클로저에 사용되는 특성입니다. 클로저가 함수의 매개 변수로 전달될 때, 기본적으로는 함수가 반환된 후에 클로저가 소멸됩니다. 그러나 클로저가 함수의 범위를 벗어나서 다른 곳에서 호출되거나, 나중에 호출될 수 있는 경우에는 **`@escaping`** 특성을 사용하여 클로저가 함수의 범위를 벗어날 수 있음을 명시해야 합니다.
+
+ 예를 들어, 비동기 작업에서 종종 **`@escaping`** 특성이 사용됩니다. 비동기 작업이 완료되면 완료 핸들러로 전달된 클로저가 호출되지만, 이 클로저는 함수가 이미 반환된 이후에 호출됩니다. 이런 경우 **`@escaping`** 특성이 필요합니다.
+ 
+ func performAsyncOperation(completion: @escaping () -> Void) {
+     DispatchQueue.global().async {
+         // 비동기 작업 수행
+         // ...
+
+         // 작업 완료 후 메인 스레드에서 완료 핸들러 호출
+         DispatchQueue.main.async {
+             completion()
+         }
+     }
+ }
+
+ 위 예제에서 performAsyncOperation 함수는 비동기 작업을 수행한 후 완료 핸들러로 전달된 클로저를 호출합니다. 완료 핸들러는 performAsyncOperation 함수가 이미 반환된 이후에 호출되므로, @escaping 특성이 필요합니다.
+ */
