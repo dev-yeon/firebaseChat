@@ -148,6 +148,8 @@ struct LoginJoinView: View {
             switch result {
             case .success(let downloadURL):
                 print("이미지 업로드 성공: \(downloadURL)")
+                // 회원정보 DB에 수록 :  인증 (uid, 이메일, 프로필이미지 경로)
+                self.storeUserInformation(profileImageUrl: downloadURL)
             case .failure(let error):
                 print("이미지 업로드 실패: \(error.localizedDescription)")
             }
@@ -155,6 +157,41 @@ struct LoginJoinView: View {
         
         //이미지 업로드 메소드
         //uploadImageToStorage()
+        
+    }
+    func storeUserInformation(profileImageUrl: String?) {
+        guard let profileImageUrl = profileImageUrl else {
+            print("프로필 이미지 경로가 nil입니다.")
+            return
+        }
+        
+        guard let uid = FirebaseUtil.shared.auth.currentUser?.uid else {
+            print("로그인 안됨")
+            return
+        }
+
+        // 현재 로그인한 사용자 계정을 가져오기
+        // uid - email - profileimageURL 을 결합한 dictionary 객체를 하나 만들고.
+        let userEmail = FirebaseUtil.shared.auth.currentUser?.email ?? ""
+        let userInfo: [String: Any] = [
+            "uid": uid,
+            "email": userEmail,
+            "profileImageUrl": profileImageUrl
+        ]
+
+        // 컬렉션에 지정, Document(ID)는 UID로 지정, setData 함수를 통해서, Push 해서
+        // 데이터를 집어넣도록 하겠다.
+        // push 할때 들어가는 파라미터 데이터는 Dictionary (타입) 객체가 될 것이다.
+        
+        FirebaseUtil.shared.firestore.collection("users").document(uid).setData(userInfo) { error in
+            if let error = error {
+            //예외처리 클로저로 ㅃㅐ기
+                print("회원 정보 저장 중 오류 발생: \(error.localizedDescription)")
+            } else {
+                print("회원 정보 저장 성공")
+                // 회원 정보 저장이 완료되면 이동하거나 다른 작업을 수행할 수 있습니다.
+            }
+        }
     }
     //@escaping 은 이 클로저 함수가 이 블록을, 함수 호출을 넘어서도 한번 더 호출 될 수 있도록 해주는 지시어
     func uploadImageToStorage(_ image: UIImage, path: String, completion: @escaping (Result<String, Error>) -> Void) {
