@@ -15,7 +15,7 @@ struct LoginJoinView: View {
     // 프로파일 이미지 객체와 선택된 이미지 객체를 따로따로 갖고 있어야지
     // 이미지 피커뷰에서 가져온 이미지와 실제 세팅 된 이미지를 구분 할 수가 있다.
     
-
+    
     var body: some View {
         NavigationView {
             ScrollView {
@@ -33,11 +33,12 @@ struct LoginJoinView: View {
                         .padding(12)
                         .background(Color.white)
                         
-                        MyButton(title: "로그인", color: .blue) {
-                            loginUserAction()
+                        MyButton(title: "회원가입", color: .blue) {
+                            //loginUserAction()
+                            registerUserAction()
                         }
                         
-                        MyButton(title: "회원가입", color: Color(.init(red: 0.5, green: 0.2, blue: 0.9, alpha: 1.0))) {
+                        MyButton(title: "로그인", color: Color(.init(red: 0.5, green: 0.2, blue: 0.9, alpha: 1.0))) {
                             isLoginMode.toggle()
                         }
                     } else {
@@ -65,7 +66,7 @@ struct LoginJoinView: View {
                                 }
                             }
                             .overlay(RoundedRectangle(cornerRadius: 64)
-                                .stroke(Color.gray, lineWidth: 3)) //선택되면 바뀌어짐 
+                                .stroke(Color.gray, lineWidth: 3)) //선택되면 바뀌어짐
                         }
                         .sheet(isPresented: $isShowingImagePicker) {
                             ImagePickerView(selectedImage: $profileImage)
@@ -82,7 +83,8 @@ struct LoginJoinView: View {
                         .background(Color.white)
                         
                         MyButton(title: "회원가입", color: .blue) {
-                            print("Button Tapped!")
+                            registerUserAction()
+                            print("회원가입 Button Tapped!")
                         }
                         
                         MyButton(title: "로그인", color: Color(.init(red: 0.5, green: 0.2, blue: 0.9, alpha: 1.0))) {
@@ -99,6 +101,19 @@ struct LoginJoinView: View {
         }//NavigationView
     }//body
     
+    func registerUserAction() {
+        FirebaseUtil.shared.auth.createUser(withEmail: email, password: password) { authResult, error in if let error = error {
+            print("회원가입 중 오류 발생 : \(error.localizedDescription)")
+            return
+        }
+            // 회원가입 성공
+            print("회원가입한 사용자: \(authResult?.user.email ?? "")")
+            
+            // 프로필 이미지 업로드, 다른 뷰로 이동하는 등 추가 작업 수행
+            
+        }
+    }
+    
     func loginUserAction() {
         FirebaseUtil.shared.auth.signIn(withEmail: email, password: password) {authResult, error in
             if let error = error {
@@ -107,7 +122,7 @@ struct LoginJoinView: View {
             }
             // 로그인 성공
             print("로그인한 사용자: \(authResult?.user.email ?? "")")
-                        print("로그인한 사용자: \(authResult?.user.uid ?? "" )")
+            print("로그인한 사용자: \(authResult?.user.uid ?? "" )")
             
             // 다른 뷰로 이동하는 등 추가 작업 수행
         }
