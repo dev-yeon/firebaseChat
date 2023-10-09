@@ -8,17 +8,21 @@
 
 /* Begin PBXBuildFile section */
 		26357C8C2AD1933E0098C8F5 /* FirebaseChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26357C8B2AD1933E0098C8F5 /* FirebaseChatApp.swift */; };
-		26357C8E2AD1933E0098C8F5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26357C8D2AD1933E0098C8F5 /* ContentView.swift */; };
+		26357C8E2AD1933E0098C8F5 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26357C8D2AD1933E0098C8F5 /* MainView.swift */; };
 		26357C902AD1933F0098C8F5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 26357C8F2AD1933F0098C8F5 /* Assets.xcassets */; };
 		26357C932AD1933F0098C8F5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 26357C922AD1933F0098C8F5 /* Preview Assets.xcassets */; };
+		26357C9A2AD1950A0098C8F5 /* LoginJoinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26357C992AD1950A0098C8F5 /* LoginJoinView.swift */; };
+		26357C9C2AD195910098C8F5 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26357C9B2AD195910098C8F5 /* HomeView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		26357C882AD1933E0098C8F5 /* FirebaseChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FirebaseChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		26357C8B2AD1933E0098C8F5 /* FirebaseChatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseChatApp.swift; sourceTree = "<group>"; };
-		26357C8D2AD1933E0098C8F5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		26357C8D2AD1933E0098C8F5 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		26357C8F2AD1933F0098C8F5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		26357C922AD1933F0098C8F5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		26357C992AD1950A0098C8F5 /* LoginJoinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginJoinView.swift; sourceTree = "<group>"; };
+		26357C9B2AD195910098C8F5 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,7 +56,9 @@
 			isa = PBXGroup;
 			children = (
 				26357C8B2AD1933E0098C8F5 /* FirebaseChatApp.swift */,
-				26357C8D2AD1933E0098C8F5 /* ContentView.swift */,
+				26357C8D2AD1933E0098C8F5 /* MainView.swift */,
+				26357C992AD1950A0098C8F5 /* LoginJoinView.swift */,
+				26357C9B2AD195910098C8F5 /* HomeView.swift */,
 				26357C8F2AD1933F0098C8F5 /* Assets.xcassets */,
 				26357C912AD1933F0098C8F5 /* Preview Content */,
 			);
@@ -137,7 +143,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				26357C8E2AD1933E0098C8F5 /* ContentView.swift in Sources */,
+				26357C8E2AD1933E0098C8F5 /* MainView.swift in Sources */,
+				26357C9C2AD195910098C8F5 /* HomeView.swift in Sources */,
+				26357C9A2AD1950A0098C8F5 /* LoginJoinView.swift in Sources */,
 				26357C8C2AD1933E0098C8F5 /* FirebaseChatApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
