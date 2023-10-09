@@ -42,6 +42,7 @@
 		26357CD32AD45E620098C8F5 /* FirebaseRemoteConfigSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 26357CD22AD45E620098C8F5 /* FirebaseRemoteConfigSwift */; };
 		26357CD52AD45E620098C8F5 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 26357CD42AD45E620098C8F5 /* FirebaseStorage */; };
 		26357CD72AD45E620098C8F5 /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 26357CD62AD45E620098C8F5 /* FirebaseStorageCombine-Community */; };
+		26357CD92AD460110098C8F5 /* FirebaseUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26357CD82AD460110098C8F5 /* FirebaseUtil.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +55,7 @@
 		26357C9B2AD195910098C8F5 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		26357C9D2AD43C220098C8F5 /* ImagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
 		26357C9F2AD45CD90098C8F5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		26357CD82AD460110098C8F5 /* FirebaseUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseUtil.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +120,7 @@
 				26357C992AD1950A0098C8F5 /* LoginJoinView.swift */,
 				26357C9B2AD195910098C8F5 /* HomeView.swift */,
 				26357C9D2AD43C220098C8F5 /* ImagePickerView.swift */,
+				26357CD82AD460110098C8F5 /* FirebaseUtil.swift */,
 				26357C9F2AD45CD90098C8F5 /* GoogleService-Info.plist */,
 				26357C8F2AD1933F0098C8F5 /* Assets.xcassets */,
 				26357C912AD1933F0098C8F5 /* Preview Content */,
@@ -240,6 +243,7 @@
 				26357C9C2AD195910098C8F5 /* HomeView.swift in Sources */,
 				26357C9A2AD1950A0098C8F5 /* LoginJoinView.swift in Sources */,
 				26357C8C2AD1933E0098C8F5 /* FirebaseChatApp.swift in Sources */,
+				26357CD92AD460110098C8F5 /* FirebaseUtil.swift in Sources */,
 				26357C9E2AD43C220098C8F5 /* ImagePickerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
