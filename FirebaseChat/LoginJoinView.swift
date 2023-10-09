@@ -5,9 +5,16 @@ import SwiftUI
 struct LoginJoinView: View {
     @ObservedObject var viewModel: MainViewModel
     @State var isLoginMode = false
+    
     @State var email = ""
     @State var password = ""
+    
     @State var profileImage: UIImage?
+    @State var isShowingImagePicker =  false // 이미지 피커뷰가 보일꺼냐말꺼냐 선택하는 변수,
+    @State var selectedImage: UIImage? // 이미지가 선택되었을때의 이미지 객체
+    // 프로파일 이미지 객체와 선택된 이미지 객체를 따로따로 갖고 있어야지
+    // 이미지 피커뷰에서 가져온 이미지와 실제 세팅 된 이미지를 구분 할 수가 있다.
+    
 
     var body: some View {
         NavigationView {
@@ -38,7 +45,7 @@ struct LoginJoinView: View {
                         
                         //프로필 이미지 설정
                         Button {
-                            print("Button Tapped!")
+                            isShowingImagePicker.toggle()
                         } label: {
                             VStack {
                                 // 이미지를 설정할 때의 화면,profileImage 가 if let (구문) 을 통해서, nil 이 아닐때,
@@ -48,10 +55,8 @@ struct LoginJoinView: View {
                                         .scaledToFill()
                                         .frame(width: 64, height: 64)
                                         .cornerRadius(32) // 64의 절반 값이라 원을 만들어주는거임
-                                    
                                     // 설정된 이미지를 보여주게 됨
-                                    
-                                }else{
+                                } else {
                                     // nil 일때 띄울 이미지
                                     Image(systemName: "person.fill")
                                         .font(.system(size: 32))
@@ -61,6 +66,9 @@ struct LoginJoinView: View {
                             }
                             .overlay(RoundedRectangle(cornerRadius: 64)
                                 .stroke(Color.black, lineWidth: 3))
+                        }
+                        .sheet(isPresented: $isShowingImagePicker) {
+                            ImagePickerView(selectedImage: $profileImage)
                         }
                         //입력란
                         Group {
@@ -88,9 +96,9 @@ struct LoginJoinView: View {
             .background(Color(.init(gray: 0.1, alpha: 0.1))
                 .ignoresSafeArea())
         }//NavigationView
-    }//View
+    }//body
     
-}
+}//View
 
 struct MyButton: View {
     let title: String // 타이틀
