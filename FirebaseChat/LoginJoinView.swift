@@ -4,7 +4,7 @@ import SwiftUI
 
 struct LoginJoinView: View {
     @ObservedObject var viewModel: MainViewModel
-    @State var isLoginMode = false
+    @State var isLoginMode = true
     
     @State var email = ""
     @State var password = ""
@@ -24,6 +24,7 @@ struct LoginJoinView: View {
                     
                     if isLoginMode {
                         //로그인화면
+                        
                         //입력란
                         Group {
                             TextField("이메일", text: $email)
@@ -34,12 +35,12 @@ struct LoginJoinView: View {
                         .padding(12)
                         .background(Color.white)
                         
-                        MyButton(title: "회원가입", color: .blue) {
-                            //loginUserAction()
-                            registerUserAction()
+                        MyButton(title: "로그인", color: .blue) {
+                            loginUserAction()
+                            
                         }
                         
-                        MyButton(title: "로그인", color: Color(.init(red: 0.5, green: 0.2, blue: 0.9, alpha: 1.0))) {
+                        MyButton(title: "회원가입", color: Color(.init(red: 0.5, green: 0.2, blue: 0.9, alpha: 1.0))) {
                             isLoginMode.toggle()
                         }
                     } else {
@@ -50,14 +51,13 @@ struct LoginJoinView: View {
                             isShowingImagePicker.toggle()
                         } label: {
                             VStack {
-                                // 이미지를 설정할 때의 화면,profileImage 가 if let (구문) 을 통해서, nil 이 아닐때,
                                 if let profileImage = self.profileImage {
                                     Image(uiImage: profileImage)
                                         .resizable()
                                         .scaledToFill()
                                         .frame(width: 64, height: 64)
-                                        .cornerRadius(32) // 64의 절반 값이라 원을 만들어주는거임
-                                    // 설정된 이미지를 보여주게 됨
+                                        .cornerRadius(32) 
+                                    // 64의 절반 값이라 원을 만들어주는거임 설정된 이미지를 보여주게 됨
                                 } else {
                                     // nil 일때 띄울 이미지
                                     Image(systemName: "person.fill")
@@ -67,7 +67,7 @@ struct LoginJoinView: View {
                                 }
                             }
                             .overlay(RoundedRectangle(cornerRadius: 64)
-                                .stroke(Color.gray, lineWidth: 3)) //선택되면 바뀌어짐
+                                .stroke(Color.gray, lineWidth: 3))
                         }
                         .sheet(isPresented: $isShowingImagePicker) {
                             ImagePickerView(selectedImage: $profileImage)
@@ -107,8 +107,24 @@ struct LoginJoinView: View {
             }
         }//NavigationView
     }//body
+
     
-    //  프로파일 이미지가 guard let 변수에 사용될 필요가 없고, 이유가 없을때라 그냥 언더바로 설정 
+    func loginUserAction() {
+        FirebaseUtil.shared.auth.signIn(withEmail: email, password: password) {authResult, error in
+            if let error = error {
+                print("로그인 중 오류 발생 : \(error.localizedDescription)")
+                return
+            }
+            // 로그인 성공
+            print("로그인한 사용자: \(authResult?.user.email ?? "")")
+            print("로그인한 사용자: \(authResult?.user.uid ?? "" )")
+            
+            // 다른 뷰로 이동하는 등 추가 작업 수행
+            viewModel.isLoggedIn.toggle()
+            // 로그인 하면 홈뷰로 이동하도록,
+        }
+    }
+    
     func registerUserAction() {
         guard let _ = profileImage else {
             print("이미지 선택 안됨")
@@ -134,7 +150,6 @@ struct LoginJoinView: View {
             print("이미지 선택 안됨")
             return
         }
-        
         //파이어베이스 스토리지에 업로드 하려면, 인증된사용자 여야함.
         guard let uid = FirebaseUtil.shared.auth.currentUser?.uid else {
             print("로그인 안됨")
@@ -154,22 +169,18 @@ struct LoginJoinView: View {
                 print("이미지 업로드 실패: \(error.localizedDescription)")
             }
         }
-        
         //이미지 업로드 메소드
         //uploadImageToStorage()
-        
     }
     func storeUserInformation(profileImageUrl: String?) {
         guard let profileImageUrl = profileImageUrl else {
             print("프로필 이미지 경로가 nil입니다.")
             return
         }
-        
         guard let uid = FirebaseUtil.shared.auth.currentUser?.uid else {
             print("로그인 안됨")
             return
         }
-
         // 현재 로그인한 사용자 계정을 가져오기
         // uid - email - profileimageURL 을 결합한 dictionary 객체를 하나 만들고.
         let userEmail = FirebaseUtil.shared.auth.currentUser?.email ?? ""
@@ -178,25 +189,22 @@ struct LoginJoinView: View {
             "email": userEmail,
             "profileImageUrl": profileImageUrl
         ]
-
         // 컬렉션에 지정, Document(ID)는 UID로 지정, setData 함수를 통해서, Push 해서
         // 데이터를 집어넣도록 하겠다.
         // push 할때 들어가는 파라미터 데이터는 Dictionary (타입) 객체가 될 것이다.
-        
         FirebaseUtil.shared.firestore.collection("users").document(uid).setData(userInfo) { error in
             if let error = error {
             //예외처리 클로저로 ㅃㅐ기
                 print("회원 정보 저장 중 오류 발생: \(error.localizedDescription)")
             } else {
                 print("회원 정보 저장 성공")
-                // 회원 정보 저장이 완료되면 이동하거나 다른 작업을 수행할 수 있습니다.
+                isLoginMode.toggle()
+                //성공후에는 로그인 화면으로 전환하도록 해준다.
             }
         }
     }
-    //@escaping 은 이 클로저 함수가 이 블록을, 함수 호출을 넘어서도 한번 더 호출 될 수 있도록 해주는 지시어
     func uploadImageToStorage(_ image: UIImage, path: String, completion: @escaping (Result<String, Error>) -> Void) {
         // 1. 이미지를 Data로 변환
-        // jpeg 으로 올라갈거고. 0.5 (절반) 정도 올라갈 것.
         guard let imageData = image.jpegData(compressionQuality: 0.5) else {
             completion(.failure(NSError(domain: "ImageConversion", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to convert image to data"])))
             return
@@ -214,17 +222,14 @@ struct LoginJoinView: View {
             }
             
             // 4. 다운로드 URL 가져오기
-            
             storageRef.downloadURL { url, error in
                 if let error = error {
                     // 오류 발생 시
                     completion(.failure(error))
                     return
                 }
-                //url 이 completion 클로저에 담겨온다.
+               
                 if let url = url {
-                    // 다운로드 URL 성공적으로 가져옴
-                    // 성공시에는 결국 URL 객체 absoluteString 에 실제적으로 URL이 찍힌다고 보면 됨
                     completion(.success(url.absoluteString))
                 } else {
                     completion(.failure(NSError(domain: "DownloadURL", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to get download URL"])))
@@ -232,25 +237,7 @@ struct LoginJoinView: View {
             }
         }
     }
-    
-    
-    
-    func loginUserAction() {
-        FirebaseUtil.shared.auth.signIn(withEmail: email, password: password) {authResult, error in
-            if let error = error {
-                print("로그인 중 오류 발생 : \(error.localizedDescription)")
-                return
-            }
-            // 로그인 성공
-            print("로그인한 사용자: \(authResult?.user.email ?? "")")
-            print("로그인한 사용자: \(authResult?.user.uid ?? "" )")
-            
-            // 다른 뷰로 이동하는 등 추가 작업 수행
-        }
-    }
-    
-    
-}//View
+}//struct LoginJoinView
 
 struct MyButton: View {
     let title: String // 타이틀
@@ -278,25 +265,3 @@ struct LoginJoinView_Previews: PreviewProvider {
         LoginJoinView(viewModel: MainViewModel())
     }
 }
-
-
-/*
- 
- **`@escaping`**은 Swift의 클로저에 사용되는 특성입니다. 클로저가 함수의 매개 변수로 전달될 때, 기본적으로는 함수가 반환된 후에 클로저가 소멸됩니다. 그러나 클로저가 함수의 범위를 벗어나서 다른 곳에서 호출되거나, 나중에 호출될 수 있는 경우에는 **`@escaping`** 특성을 사용하여 클로저가 함수의 범위를 벗어날 수 있음을 명시해야 합니다.
- 
- 예를 들어, 비동기 작업에서 종종 **`@escaping`** 특성이 사용됩니다. 비동기 작업이 완료되면 완료 핸들러로 전달된 클로저가 호출되지만, 이 클로저는 함수가 이미 반환된 이후에 호출됩니다. 이런 경우 **`@escaping`** 특성이 필요합니다.
- 
- func performAsyncOperation(completion: @escaping () -> Void) {
- DispatchQueue.global().async {
- // 비동기 작업 수행
- // ...
- 
- // 작업 완료 후 메인 스레드에서 완료 핸들러 호출
- DispatchQueue.main.async {
- completion()
- }
- }
- }
- 
- 위 예제에서 performAsyncOperation 함수는 비동기 작업을 수행한 후 완료 핸들러로 전달된 클로저를 호출합니다. 완료 핸들러는 performAsyncOperation 함수가 이미 반환된 이후에 호출되므로, @escaping 특성이 필요합니다.
- */
